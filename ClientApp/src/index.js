@@ -13,7 +13,10 @@ ReactDOM.render(
         clientId="NfcXnFG5PlbOd0DNH94ilDDwllexyAAb"
         redirectUri={window.location.origin}>
         <App />
-    </Auth0Provider>,
+    </Auth0Provider>
+
+
+    ,
     document.getElementById('root')
 );
 

@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Presento.Models;
 
 namespace Presento
 {
@@ -23,20 +25,26 @@ namespace Presento
 
             services.AddControllersWithViews();
 
+            services.AddDbContext<UserDBContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(options =>
+            options.WithOrigins("").AllowAnyHeader().AllowAnyMethod());
+
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
             {
                 app.UseExceptionHandler("/Error");
@@ -62,9 +70,7 @@ namespace Presento
                 spa.Options.SourcePath = "ClientApp";
 
                 if (env.IsDevelopment())
-                {
                     spa.UseReactDevelopmentServer(npmScript: "start");
-                }
             });
         }
     }
